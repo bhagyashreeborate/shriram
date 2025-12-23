@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mala Counter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+<h1>🕉️ Mala Progress</h1>
+<p>Total Done: <strong id="done">0</strong></p>
+<p>Goal: <strong id="goal">0</strong></p>
+<p>Remaining: <strong id="remaining">0</strong></p>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    // 🔴 same config
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const ref = doc(db, "mala", "counter");
+
+  onSnapshot(ref, snap => {
+    const d = snap.data();
+    done.innerText = d.done;
+    goal.innerText = d.goal;
+    remaining.innerText = Math.max(d.goal - d.done, 0);
+  });
+</script>
+
+</body>
+</html>
