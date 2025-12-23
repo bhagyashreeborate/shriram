@@ -4,95 +4,150 @@
   <meta charset="UTF-8" />
   <title>Mala Counter</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
+      margin: 0;
+      height: 100vh;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #eef2ff, #fdf2f8);
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
     }
 
-    .card {
+    .container {
       background: white;
-      padding: 24px;
-      border-radius: 12px;
-      width: 320px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      width: 360px;
+      padding: 28px;
+      border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
       text-align: center;
     }
 
-    h2 {
-      margin-bottom: 16px;
+    h1 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 20px;
+      font-size: 14px;
     }
 
     input {
       width: 100%;
-      padding: 10px;
-      margin: 8px 0;
+      padding: 12px;
       font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      margin-bottom: 10px;
+      outline: none;
     }
 
     button {
       width: 100%;
       padding: 12px;
-      margin-top: 10px;
       font-size: 16px;
+      border-radius: 10px;
       border: none;
-      border-radius: 8px;
       cursor: pointer;
-      background: #4f46e5;
+      background: #6366f1;
       color: white;
+      margin-bottom: 10px;
     }
 
     button.secondary {
-      background: #e5e7eb;
-      color: #111;
+      background: #f3f4f6;
+      color: #111827;
     }
 
     .stats {
-      margin-top: 16px;
+      margin: 20px 0;
+    }
+
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      margin: 6px 0;
       font-size: 16px;
     }
 
     .remaining {
-      font-weight: bold;
       color: #dc2626;
+      font-weight: bold;
+    }
+
+    .progress-bar {
+      background: #e5e7eb;
+      border-radius: 10px;
+      height: 14px;
+      overflow: hidden;
+      margin-top: 14px;
+    }
+
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .percent {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #374151;
     }
   </style>
 </head>
-<body>
 
-  <div class="card">
-    <h2>🕉️ Mala Counter</h2>
+<body>
+  <div class="container">
+    <h1>🕉️ Mala Counter</h1>
+    <div class="subtitle">Track your jap towards a sacred goal</div>
 
     <input type="number" id="goalInput" placeholder="Set Goal (e.g. 108)" />
     <button onclick="setGoal()">Set Goal</button>
 
-    <hr />
-
-    <input type="number" id="addInput" placeholder="Add malas done" />
-    <button onclick="addMalas()">Add</button>
+    <input type="number" id="addInput" placeholder="Add malas completed" />
+    <button onclick="addMalas()">Add Malas</button>
 
     <div class="stats">
-      <p>Total Done: <strong id="totalDone">0</strong></p>
-      <p>Goal: <strong id="goal">0</strong></p>
-      <p class="remaining">Remaining: <span id="remaining">0</span></p>
+      <div class="stat">
+        <span>Total Done</span>
+        <strong id="done">0</strong>
+      </div>
+      <div class="stat">
+        <span>Goal</span>
+        <strong id="goal">0</strong>
+      </div>
+      <div class="stat remaining">
+        <span>Remaining</span>
+        <span id="remaining">0</span>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="percent" id="percent">0% completed</div>
     </div>
 
     <button class="secondary" onclick="resetAll()">Reset</button>
   </div>
 
   <script>
-    let totalDone = Number(localStorage.getItem("totalDone")) || 0;
+    let total = Number(localStorage.getItem("total")) || 0;
     let goal = Number(localStorage.getItem("goal")) || 0;
 
     function updateUI() {
-      document.getElementById("totalDone").innerText = totalDone;
+      document.getElementById("done").innerText = total;
       document.getElementById("goal").innerText = goal;
-      document.getElementById("remaining").innerText = Math.max(goal - totalDone, 0);
+      document.getElementById("remaining").innerText = Math.max(goal - total, 0);
+
+      let percent = goal > 0 ? Math.min((total / goal) * 100, 100) : 0;
+      document.getElementById("progress").style.width = percent + "%";
+      document.getElementById("percent").innerText = Math.floor(percent) + "% completed";
     }
 
     function setGoal() {
@@ -107,15 +162,15 @@
     function addMalas() {
       const add = Number(document.getElementById("addInput").value);
       if (add > 0) {
-        totalDone += add;
-        localStorage.setItem("totalDone", totalDone);
+        total += add;
+        localStorage.setItem("total", total);
         updateUI();
       }
     }
 
     function resetAll() {
       if (confirm("Reset goal and count?")) {
-        totalDone = 0;
+        total = 0;
         goal = 0;
         localStorage.clear();
         updateUI();
@@ -124,6 +179,5 @@
 
     updateUI();
   </script>
-
 </body>
 </html>
